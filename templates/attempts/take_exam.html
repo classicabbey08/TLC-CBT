@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ exam.title }} - CBT
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+
+        .header {
+            background: #1677ff;
+            color: white;
+            padding: 18px 25px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .header-inner {
+            max-width: 1000px;
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        .exam-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        .timer {
+            background: white;
+            color: #1677ff;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            min-width: 100px;
+
+            text-align: center;
+        }
+
+
+        .container {
+            max-width: 1000px;
+
+            margin: 30px auto;
+
+            padding: 0 20px;
+        }
+
+
+        .info {
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .info h1 {
+            margin-top: 0;
+        }
+
+
+        .question-card {
+            background: white;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .question-number {
+            color: #1677ff;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+        }
+
+
+        .question-text {
+            font-size: 18px;
+
+            font-weight: 600;
+
+            line-height: 1.5;
+
+            margin-bottom: 20px;
+        }
+
+
+        .choice {
+            display: block;
+
+            padding: 13px 15px;
+
+            margin: 10px 0;
+
+            border: 1px solid #ddd;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+        }
+
+
+        .choice:hover {
+            background: #f0f6ff;
+        }
+
+
+        .choice input {
+            margin-right: 10px;
+        }
+
+
+        .submit-area {
+            text-align: center;
+
+            margin: 30px 0 60px;
+        }
+
+
+        .submit-btn {
+            background: #1677ff;
+
+            color: white;
+
+            border: none;
+
+            padding: 15px 35px;
+
+            border-radius: 8px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        .submit-btn:hover {
+            background: #095fcf;
+        }
+
+
+        .empty {
+            background: #fff3cd;
+
+            border: 1px solid #ffe69c;
+
+            padding: 20px;
+
+            border-radius: 8px;
+
+            color: #664d03;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .header-inner {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+
+            .timer {
+                width: 100%;
+            }
+
+
+            .question-card {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="exam-title">
+            {{ exam.title }}
+        </div>
+
+
+        <div
+            class="timer"
+            id="timer"
+            data-seconds="{{ seconds_remaining }}"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================================
+         EXAM INFORMATION
+         ========================================= -->
+
+    <div class="info">
+
+        <h1>
+            {{ exam.title }}
+        </h1>
+
+
+        <p>
+
+            <strong>
+                Subject:
+            </strong>
+
+            {{ exam.subject.name }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Class:
+            </strong>
+
+            {{ exam.target_class }}
+
+        </p>
+
+
+        {% if exam.target_class|slice:":3" == "SSS" %}
+
+            <p>
+
+                <strong>
+                    Department:
+                </strong>
+
+                {{ exam.get_department_display }}
+
+            </p>
+
+        {% endif %}
+
+
+        <p>
+
+            <strong>
+                Questions:
+            </strong>
+
+            {{ questions|length }}
+
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         QUESTIONS
+         ========================================= -->
+
+    {% if questions %}
+
+
+        <form
+            method="post"
+            action="{% url 'attempts:submit_exam' attempt_id=attempt.id %}"
+            id="exam-form"
+        >
+
+            {% csrf_token %}
+
+
+            {% for question in questions %}
+
+                <div class="question-card">
+
+
+                    <div class="question-number">
+
+                        Question
+                        {{ forloop.counter }}
+
+                    </div>
+
+
+                    <div class="question-text">
+
+                        {{ question.text }}
+
+                    </div>
+
+
+                    {% for choice in question.choices.all %}
+
+
+                        <label class="choice">
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="{{ choice.id }}"
+                            >
+
+                            {{ choice.text }}
+
+                        </label>
+
+
+                    {% empty %}
+
+
+                        <div class="empty">
+
+                            No answer choices have
+                            been added for this question.
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="submit-area">
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+                    Submit Exam
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    {% else %}
+
+
+        <div class="empty">
+
+            <strong>
+                No questions found.
+            </strong>
+
+            <br><br>
+
+            This exam currently has no questions
+            attached to it.
+
+            Please contact the teacher.
+
+        </div>
+
+
+    {% endif %}
+
+
+</main>
+
+
+<script>
+
+const timerElement =
+    document.getElementById(
+        "timer"
+    );
+
+
+let seconds =
+    parseInt(
+        timerElement.dataset.seconds,
+        10
+    );
+
+
+const examForm =
+    document.getElementById(
+        "exam-form"
+    );
+
+
+let submitted =
+    false;
+
+
+function updateTimer() {
+
+    if (seconds <= 0) {
+
+        timerElement.textContent =
+            "00:00";
+
+
+        if (
+            examForm
+            && !submitted
+        ) {
+
+            submitted = true;
+
+            examForm.submit();
+
+        }
+
+        return;
+
+    }
+
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+    const remainingSeconds =
+        seconds % 60;
+
+
+    timerElement.textContent =
+        String(minutes)
+        .padStart(2, "0")
+        + ":"
+        + String(
+            remainingSeconds
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    seconds--;
+
+}
+
+
+updateTimer();
+
+
+setInterval(
+    updateTimer,
+    1000
+);
+
+</script>
+
+
+</body>
+
+</html>

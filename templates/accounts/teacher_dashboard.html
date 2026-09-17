@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h2>
+            Welcome, {{ teacher.first_name|default:teacher.username }}
+        </h2>
+        <p class="text-muted">
+            Teacher Dashboard
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Students -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">👨‍🎓 Students</h5>
+                    <p class="card-text text-muted">
+                        Add, edit, deactivate or remove student accounts.
+                    </p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'accounts:teacher_students' %}" class="btn btn-primary">
+                            Manage Students
+                        </a>
+                        <a href="{% url 'accounts:teacher_add_student' %}" class="btn btn-outline-primary">
+                            + Add Student
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exams -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Exams</h5>
+                    <p class="card-text text-muted">
+                        Create exams and manage your CBT questions.
+                    </p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'exams:exam_list' %}" class="btn btn-primary">
+                            My Exams
+                        </a>
+                        <a href="{% url 'exams:exam_create' %}" class="btn btn-outline-primary">
+                            + Create Exam
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results (FIXED) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📊 Results</h5>
+                    <p class="card-text text-muted">
+                        View student examination results for your exams.
+                    </p>
+                    <a href="{% url 'attempts:teacher_results' %}" class="btn btn-primary">
+                        Student Results
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

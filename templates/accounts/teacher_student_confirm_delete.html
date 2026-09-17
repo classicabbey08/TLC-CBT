@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Remove Student{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <h3>Remove Student</h3>
+
+            <p>
+                Are you sure you want to remove
+                <strong>
+                    {{ student.first_name }}
+                    {{ student.last_name }}
+                </strong>?
+            </p>
+
+            <p class="text-danger">
+                This will permanently delete the student account.
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn btn-danger"
+                >
+                    Yes, Remove Student
+                </button>
+
+                <a
+                    href="{% url 'accounts:teacher_students' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

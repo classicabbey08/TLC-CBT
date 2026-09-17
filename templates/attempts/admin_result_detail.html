@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Result{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <!-- Success Icon -->
+
+                    <div class="mb-4">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="80"
+                            height="80"
+                            fill="#198754"
+                            viewBox="0 0 16 16"
+                        >
+
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                            />
+
+                        </svg>
+
+                    </div>
+
+
+                    <!-- Heading -->
+
+                    <h2 class="mb-2">
+                        Exam Submitted Successfully
+                    </h2>
+
+                    <p class="text-muted mb-4">
+
+                        {{ attempt.exam.title }}
+                        —
+                        {{ attempt.exam.subject.name }}
+
+                    </p>
+
+
+                    <!-- Score Cards -->
+
+                    <div class="row g-3 mb-4">
+
+                        <!-- Score -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted small">
+                                    Score
+                                </div>
+
+                                <div class="fs-3 fw-bold">
+
+                                    {{ attempt.score }}
+                                    /
+                                    {{ attempt.total_marks }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Percentage -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted small">
+                                    Percentage
+                                </div>
+
+                                <div class="fs-3 fw-bold">
+
+                                    {% if attempt.total_marks %}
+
+                                        {% widthratio attempt.score attempt.total_marks 100 %}%
+
+                                    {% else %}
+
+                                        0%
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Submitted -->
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted small">
+                                    Submitted
+                                </div>
+
+                                <div class="fs-6 fw-semibold mt-2">
+
+                                    {% if attempt.submitted_at %}
+
+                                        {{ attempt.submitted_at|date:"M d, Y" }}
+
+                                        <br>
+
+                                        <small class="text-muted">
+
+                                            {{ attempt.submitted_at|time:"g:i A" }}
+
+                                        </small>
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Message -->
+
+                    <div class="alert alert-info text-start">
+
+                        <strong>Note:</strong>
+
+                        Your teacher can still review the full
+                        breakdown of your answers.
+
+                        This score has been recorded successfully.
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+
+                        <a
+                            href="{% url 'attempts:available_exams' %}"
+                            class="btn btn-primary btn-lg px-4"
+                        >
+
+                            Back to Available Exams
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'attempts:student_certificate' attempt.id %}"
+                            class="btn btn-success btn-lg px-4"
+                        >
+
+                            🏆 View / Print Certificate
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@page { size: A4 landscape; margin: 12mm; }
+body { font-family: Helvetica, Arial, sans-serif; text-align: center; color: #222; }
+.outer { border: 8px solid #173f5f; padding: 8px; }
+.inner { border: 2px solid #c9a227; padding: 28px; min-height: 450px; }
+.school { font-family: Helvetica; font-size: 25px; font-weight: bold; color: #173f5f; text-transform: uppercase; }
+.motto { font-size: 11px; color: #666; margin: 4px 0 18px; }
+.title { font-size: 31px; font-weight: bold; color: #c9a227; margin: 12px 0 18px; }
+.presented { font-size: 13px; color: #555; }
+.student { font-size: 27px; font-weight: bold; margin: 12px 0; border-bottom: 1px solid #c9a227; padding-bottom: 5px; }
+.description { font-size: 13px; line-height: 1.7; }
+.exam { font-size: 18px; font-weight: bold; color: #173f5f; margin: 5px 0; }
+table { width: 88%; margin: 20px auto; border-collapse: collapse; }
+th { background: #173f5f; color: white; padding: 8px; font-size: 10px; }
+td { border: 1px solid #bbb; padding: 8px; font-size: 11px; }
+.grade { font-size: 16px; font-weight: bold; color: #173f5f; }
+.info { font-size: 10px; color: #444; line-height: 1.7; }
+.signatures { width: 88%; margin: 35px auto 0; }
+.sig { width: 35%; display: inline-block; margin: 0 7%; }
+.line { border-top: 1px solid #222; margin-bottom: 5px; }
+.small { font-size: 9px; color: #555; }
+</style>
+</head>
+<body>
+<div class="outer">
+<div class="inner">
+<div class="school">TimiAkorede Literacy Center</div>
+<div class="motto">Acquiring Success</div>
+<div class="title">Certificate of Achievement</div>
+<div class="presented">This certificate is proudly presented to</div>
+<div class="student">{{ student.get_full_name|default:student.username }}</div>
+<div class="description">
+For successfully completing the examination
+<div class="exam">{{ attempt.exam.title }}</div>
+in <b>{{ attempt.exam.subject.name }}</b>
+for <b>{{ student.get_student_class_display }}</b>
+{% if is_sss %} - <b>{{ student.get_department_display }}</b>{% endif %}
+</div>
+<table>
+<tr><th>Score</th><th>Total Marks</th><th>Percentage</th><th>Grade</th><th>Remark</th></tr>
+<tr>
+<td>{{ attempt.score }}</td>
+<td>{{ attempt.total_marks }}</td>
+<td>{{ percentage }}%</td>
+<td class="grade">{{ grade }}</td>
+<td>{{ remark }}</td>
+</tr>
+</table>
+<div class="info">
+{% if student.admission_number %}Admission Number: <b>{{ student.admission_number }}</b> &nbsp; | &nbsp;{% endif %}
+Class: <b>{{ student.get_student_class_display }}</b>
+{% if is_sss %}&nbsp; | &nbsp; Department: <b>{{ student.get_department_display }}</b>{% endif %}
+<br>
+Examination Date: <b>{{ attempt.submitted_at|date:"F d, Y" }}</b>
+&nbsp; | &nbsp; Certificate No: <b>{{ certificate_number }}</b>
+</div>
+<div class="signatures">
+<div class="sig"><div class="line"></div><div class="small">Class Teacher</div></div>
+<div class="sig"><div class="line"></div><div class="small">Principal</div></div>
+</div>
+</div>
+</div>
+</body>
+</html>

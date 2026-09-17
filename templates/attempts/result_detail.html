@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Submitted{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow border-0">
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="#198754" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                    </div>
+
+                    <h2 class="mb-2">Exam Submitted Successfully</h2>
+                    <p class="text-muted mb-4">
+                        {{ attempt.exam.title }} — {{ attempt.exam.subject.name }}
+                    </p>
+
+                    <div class="border rounded p-4 mb-4">
+                        <div class="text-muted small mb-1">Submission Status</div>
+                        <div class="fs-4 fw-bold text-success">Recorded Successfully</div>
+                        {% if attempt.submitted_at %}
+                            <div class="text-muted mt-2">
+                                Submitted {{ attempt.submitted_at|date:"M d, Y" }} at {{ attempt.submitted_at|time:"g:i A" }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="alert alert-info text-start">
+                        <strong>Note:</strong> Your result has been recorded and will be reviewed by your teacher.
+                        Your score and performance report are not displayed on the student portal.
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                        <a href="{% url 'attempts:available_exams' %}" class="btn btn-primary btn-lg">
+                            Back to Available Exams
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bulk Upload Questions{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Bulk Upload Questions</h2>
+
+    <h5 class="text-muted">
+        Exam: {{ exam.title }}
+    </h5>
+
+    <hr>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="excel_file" class="form-label">
+                        Select Excel File (.xlsx)
+                    </label>
+
+                    <input
+                        type="file"
+                        id="excel_file"
+                        name="excel_file"
+                        class="form-control"
+                        accept=".xlsx"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Upload Questions
+                </button>
+
+                <a
+                    href="{% url 'exams:question_list' exam.id %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <strong>Expected Excel Columns:</strong>
+
+        <ol class="mb-0">
+            <li>Question</li>
+            <li>Option A</li>
+            <li>Option B</li>
+            <li>Option C</li>
+            <li>Option D</li>
+            <li>Correct Answer (A/B/C/D)</li>
+            <li>Marks (optional)</li>
+        </ol>
+    </div>
+
+</div>
+
+{% endblock %}

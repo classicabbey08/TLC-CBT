@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if editing %}Edit Exam{% else %}Create Exam{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h4 class="mb-3">
+            {% if editing %}Edit Exam{% else %}Create Exam{% endif %}
+        </h4>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+
+                    {% if field.name == 'is_active' %}
+                        <div class="form-check">
+                            {{ field }}
+                            <label class="form-check-label" for="{{ field.id_for_label }}">Active</label>
+                        </div>
+                    {% else %}
+                        {{ field|add_class:"form-control" }}
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">
+                {% if editing %}Save Changes{% else %}Create Exam{% endif %}
+            </button>
+            <a href="{% url 'exams:exam_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

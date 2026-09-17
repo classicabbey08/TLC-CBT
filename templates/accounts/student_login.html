@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Login – TLC</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 580px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .header {
+            background: #1677ff;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .header h1 {
+            margin: 10px 0 0;
+            font-size: 32px;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+        }
+
+        .body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        select,
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d5d5d5;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        select:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #1677ff;
+            box-shadow:
+                0 0 0 3px rgba(22, 119, 255, 0.15);
+        }
+
+        .help-text {
+            margin-top: 7px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #ffe8e8;
+            border: 1px solid #ffbcbc;
+            color: #b00020;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+        }
+
+        .student-count {
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-btn {
+            width: 100%;
+            border: none;
+            background: #1677ff;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #0d65dc;
+        }
+
+        .login-btn:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #1677ff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                align-items: flex-start;
+                padding: 20px 10px;
+            }
+
+            .body {
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="login-card">
+
+    <div class="header">
+
+        <div>
+            <!--
+                If your project already has a logo,
+                replace this with your existing logo.
+            -->
+        </div>
+
+        <h1>
+            Student Login
+        </h1>
+
+    </div>
+
+
+    <div class="body">
+
+        {% if form.non_field_errors %}
+
+            <div class="error">
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <form
+            method="post"
+            id="student-login-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- =========================================
+                 CLASS
+                 ========================================= -->
+
+            <div class="form-group">
+
+                <label for="id_student_class">
+                    Class
+                </label>
+
+                {{ form.student_class }}
+
+            </div>
+
+
+            <!-- =========================================
+                 STUDENT
+                 ========================================= -->
+
+            <div class="form-group">
+
+                <label for="id_student">
+                    Student Name
+                </label>
+
+                {{ form.student }}
+
+                <div
+                    class="help-text"
+                    id="student-help"
+                >
+                    Select your class first.
+                </div>
+
+                <div
+                    class="student-count"
+                    id="student-count"
+                ></div>
+
+            </div>
+
+
+            <!-- =========================================
+                 PIN
+                 ========================================= -->
+
+            <div class="form-group">
+
+                <label for="id_pin">
+                    PIN
+                </label>
+
+                {{ form.pin }}
+
+            </div>
+
+
+            <!-- =========================================
+                 LOGIN
+                 ========================================= -->
+
+            <button
+                type="submit"
+                class="login-btn"
+                id="login-button"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <a
+            href="{% url 'accounts:home' %}"
+            class="back-link"
+        >
+            Back to Home
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const classSelect =
+    document.getElementById(
+        "id_student_class"
+    );
+
+const studentSelect =
+    document.getElementById(
+        "id_student"
+    );
+
+const studentHelp =
+    document.getElementById(
+        "student-help"
+    );
+
+const studentCount =
+    document.getElementById(
+        "student-count"
+    );
+
+
+function clearStudents() {
+
+    studentSelect.innerHTML = "";
+
+    const option =
+        document.createElement(
+            "option"
+        );
+
+    option.value = "";
+
+    option.textContent =
+        "---------";
+
+    studentSelect.appendChild(
+        option
+    );
+
+    studentCount.textContent = "";
+
+}
+
+
+async function loadStudents() {
+
+    const selectedClass =
+        classSelect.value;
+
+    clearStudents();
+
+    if (!selectedClass) {
+
+        studentHelp.textContent =
+            "Select your class first.";
+
+        return;
+    }
+
+
+    studentHelp.textContent =
+        "Loading students...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "{% url 'accounts:students_by_class' %}"
+                + "?class="
+                + encodeURIComponent(
+                    selectedClass
+                )
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Could not load students."
+            );
+
+        }
+
+
+        const students =
+            await response.json();
+
+
+        if (!students.length) {
+
+            studentHelp.textContent =
+                "No active students found for this class.";
+
+            studentCount.textContent = "";
+
+            return;
+
+        }
+
+
+        students.forEach(
+            function(student) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    student.id;
+
+                let label =
+                    student.name;
+
+                if (
+                    student.admission_number
+                ) {
+
+                    label +=
+                        " ("
+                        + student.admission_number
+                        + ")";
+
+                }
+
+                option.textContent =
+                    label;
+
+                studentSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        studentHelp.textContent =
+            "Select your name.";
+
+        studentCount.textContent =
+            students.length
+            + " student"
+            + (
+                students.length === 1
+                    ? ""
+                    : "s"
+            )
+            + " found in "
+            + selectedClass
+            + ".";
+
+
+    } catch (error) {
+
+        studentHelp.textContent =
+            "Unable to load students. Please refresh and try again.";
+
+        studentCount.textContent = "";
+
+        console.error(error);
+
+    }
+
+}
+
+
+classSelect.addEventListener(
+    "change",
+    loadStudents
+);
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        if (classSelect.value) {
+
+            loadStudents();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if editing %}Edit{% else %}Add{% endif %} Question
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>
+                {% if editing %}
+                    Edit Question
+                {% else %}
+                    Add Question
+                {% endif %}
+            </h2>
+
+            <p class="text-muted mb-0">
+                {{ exam.title }}
+            </p>
+        </div>
+
+        <a href="{% url 'exams:question_list' exam.id %}"
+           class="btn btn-outline-secondary">
+            Back to Questions
+        </a>
+    </div>
+
+
+    <!-- IMPORTANT: The form tag was missing -->
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <!-- Question -->
+        {% for field in form %}
+            <div class="mb-3">
+
+                <label class="form-label">
+                    {{ field.label }}
+                </label>
+
+                {{ field|add_class:"form-control" }}
+
+                {% if field.help_text %}
+                    <div class="form-text">
+                        {{ field.help_text }}
+                    </div>
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="text-danger small">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+
+
+        <!-- Choices -->
+        <div class="mt-4">
+
+            <h5>
+                Answer Choices
+            </h5>
+
+            <p class="text-muted">
+                Enter exactly four options and mark exactly one as correct.
+            </p>
+
+            {{ formset.management_form }}
+
+            {% if formset.non_form_errors %}
+                <div class="alert alert-danger">
+                    {{ formset.non_form_errors }}
+                </div>
+            {% endif %}
+
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead>
+                        <tr>
+                            <th style="width: 60%;">
+                                Choice
+                            </th>
+
+                            <th class="text-center"
+                                style="width: 120px;">
+                                Correct
+                            </th>
+
+                            {% if editing %}
+                                <th class="text-center"
+                                    style="width: 100px;">
+                                    Delete
+                                </th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for choice_form in formset %}
+
+                            <tr>
+
+                                <td>
+
+                                    {{ choice_form.id }}
+
+                                    {{ choice_form.text|add_class:"form-control" }}
+
+                                    {% if choice_form.text.errors %}
+                                        <div class="text-danger small">
+                                            {{ choice_form.text.errors }}
+                                        </div>
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td class="text-center">
+
+                                    {{ choice_form.is_correct }}
+
+                                    {% if choice_form.is_correct.errors %}
+                                        <div class="text-danger small">
+                                            {{ choice_form.is_correct.errors }}
+                                        </div>
+                                    {% endif %}
+
+                                </td>
+
+
+                                {% if editing %}
+
+                                    <td class="text-center">
+
+                                        {% if choice_form.instance.pk %}
+                                            {{ choice_form.DELETE }}
+                                        {% endif %}
+
+                                    </td>
+
+                                {% endif %}
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="mt-4 d-flex gap-2">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                {% if editing %}
+                    Save Changes
+                {% else %}
+                    Save Question
+                {% endif %}
+            </button>
+
+
+            <a href="{% url 'exams:question_list' exam.id %}"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

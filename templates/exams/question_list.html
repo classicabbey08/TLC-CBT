@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Questions{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>{{ exam.title }}</h2>
+        <p class="text-muted">
+            Subject: {{ exam.subject.name }}
+        </p>
+    </div>
+
+    <div>
+        <a href="{% url 'exams:question_create' exam.id %}"
+           class="btn btn-primary">
+            + Add Question
+        </a>
+
+        <a href="{% url 'exams:bulk_upload_questions' exam.id %}"
+           class="btn btn-success">
+            📂 Import Questions
+        </a>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if questions %}
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th width="5%">#</th>
+            <th>Question</th>
+            <th width="10%">Marks</th>
+            <th width="25%">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for question in questions %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+
+            <td>
+                <strong>{{ question.text }}</strong>
+
+                <ul class="mt-2 mb-0">
+                    {% for choice in question.choices.all %}
+                        <li>
+                            {{ choice.text }}
+                            {% if choice.is_correct %}
+                                <span class="badge bg-success">Correct</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </td>
+
+            <td>{{ question.marks }}</td>
+
+            <td>
+                <a href="{% url 'exams:question_edit' exam.id question.id %}"
+                   class="btn btn-warning btn-sm">
+                    Edit
+                </a>
+
+                <a href="{% url 'exams:question_delete' exam.id question.id %}"
+                   class="btn btn-danger btn-sm">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<div class="alert alert-info">
+    <h5>No questions added yet.</h5>
+    <p>
+        Click <strong>Add Question</strong> to create one manually,
+        or click <strong>Import Questions</strong> to upload an Excel file.
+    </p>
+</div>
+{% endif %}
+
+<a href="{% url 'exams:exam_list' %}" class="btn btn-secondary mt-3">
+    ← Back to Exams
+</a>
+
+{% endblock %}

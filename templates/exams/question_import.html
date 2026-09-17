@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Import Questions</h3>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button class="btn btn-primary">
+        Upload
+    </button>
+</form>
+
+{% endblock %}
